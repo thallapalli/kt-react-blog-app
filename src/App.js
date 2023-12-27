@@ -10,6 +10,7 @@ import { Route, Switch, useHistory } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import api from "./api/posts";
+import EditPost from "./EditPost";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -69,15 +70,16 @@ function App() {
     const datetime = format(new Date(), "MMMM dd, yyyy pp");
     const updatedPost = { id, title: editTitle, datetime, body: editBody };
     try {
-      const response= await api.put(`/posts/${id}`,updatedPost);
-      setPosts(posts.map(post=>post.id===id?{...response.data}:post));
-      setEditTitle('');
-      setEditBody('');
-      history.push('/');
+      const response = await api.put(`/posts/${id}`, updatedPost);
+      setPosts(
+        posts.map((post) => (post.id === id ? { ...response.data } : post))
+      );
+      setEditTitle("");
+      setEditBody("");
+      history.push("/");
     } catch (err) {
       console.log(`Error: ${err.message}`);
     }
-    
   };
   const handleDelete = async (id) => {
     try {
@@ -92,7 +94,7 @@ function App() {
 
   return (
     <div className="App">
-      <Header title="React JS Blog" />
+      <Header title="KT React Learning blog" />
       <Nav search={search} setSearch={setSearch} />
       <Switch>
         <Route exact path="/">
@@ -105,6 +107,16 @@ function App() {
             setPostTitle={setPostTitle}
             postBody={postBody}
             setPostBody={setPostBody}
+          />
+        </Route>
+        <Route path="/edit/:id">
+          <EditPost
+            posts={posts}
+            handleEdit={handleEdit}
+            editTitle={editTitle}
+            setEditTitle={setEditTitle}
+            editBody={editBody}
+            setEditBody={setEditBody}
           />
         </Route>
         <Route path="/post/:id">
